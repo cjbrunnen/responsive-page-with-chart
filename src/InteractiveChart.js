@@ -21,7 +21,7 @@ const LineChart = () => {
   const adj = 30;
   // we are appending SVG first
   const svg = d3
-    .select("body")
+    .select("#my_dataviz")
     .append("svg")
     .attr("preserveAspectRatio", "xMinYMin meet")
     .attr(
@@ -96,7 +96,8 @@ const LineChart = () => {
       return "line-" + id++;
     };
 
-    // TOOLTIP
+
+    //-----------------------------TOOLTIP------------------------------//    
     const tooltip = d3
       .select("body")
       .append("div")
@@ -129,9 +130,15 @@ const LineChart = () => {
     lines
       .append("path")
       .attr("class", ids)
+      .attr("opacity", "1")
       .attr("d", function (d) {
         return line(d.values);
       });
+    lines
+      .attr("class", function(d) {
+        return d.id
+      })
+      
 
     lines
       .append("text")
@@ -220,6 +227,28 @@ const LineChart = () => {
           .attr("r", 10)
           .style("opacity", 0);
       });
+
+//-------LEGEND----------//
+// Add a legend (interactive)
+    svg
+    .selectAll("myLegend")
+    .data(slices)
+    .enter()
+    .append('g')
+    .append("text")
+      .attr('x', function(d,i){ return 30 + i*60})
+      .attr('y', 30)
+      .text(function(d) { return d.id; })
+      .style("font-size", 15)
+      .style("cursor", "pointer")
+    .on("click", function(d){
+      // is the element currently visible ?
+      const legendId = d.target.innerHTML
+      let currentOpacity = d3.selectAll('.' + legendId).style("opacity")
+      // Change the opacity: from 0 to 1 or from 1 to 0
+      d3.selectAll("." + legendId).transition().style("opacity", currentOpacity == 1 ? 0:1)
+
+    })
   });
 
 
